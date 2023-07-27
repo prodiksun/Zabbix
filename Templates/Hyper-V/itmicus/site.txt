@@ -1,0 +1,1 @@
+https://github.com/rezoners/zabbix_hyper_v/tree/master/Template%20Microsoft%20Hyper-V

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2020-07-22T19:22:45Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>SSL Sert Expiration</template>
+            <name>SSL Sert Expiration</name>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>SSL</name>
+                </application>
+            </applications>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>SSL HTTPS Discovery</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>ssl_https.discovery</key>
+                    <delay>300</delay>
+                    <filter>
+                        <conditions>
+                            <condition>
+                                <macro>{#DOMAIN_HTTPS}</macro>
+                                <value>.*</value>
+                                <formulaid>A</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
+                    <lifetime>90d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Certificate {#DOMAIN_HTTPS} expire</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>ssl_https.expire[{#DOMAIN_HTTPS}]</key>
+                            <delay>300</delay>
+                            <history>30d</history>
+                            <trends>180d</trends>
+                            <applications>
+                                <application>
+                                    <name>SSL</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;30</expression>
+                                    <name>Certificate {#DOMAIN_HTTPS} expire less then 30 days</name>
+                                    <priority>AVERAGE</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>SSL SMTP Discovery</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>ssl_smtp.discovery</key>
+                    <delay>300</delay>
+                    <status>DISABLED</status>
+                    <filter>
+                        <conditions>
+                            <condition>
+                                <macro>{#DOMAIN_SMTP}</macro>
+                                <value>.*</value>
+                                <formulaid>A</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
+                    <lifetime>90d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Certificate {#DOMAIN_SMTP} expire</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>ssl_smtp.expire[{#DOMAIN_SMTP}]</key>
+                            <delay>300</delay>
+                            <history>30d</history>
+                            <trends>180d</trends>
+                            <applications>
+                                <application>
+                                    <name>SSL</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;30</expression>
+                                    <name>Certificate {#DOMAIN_SMTP} expire less then 30 days</name>
+                                    <priority>AVERAGE</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+        </template>
+    </templates>
+</zabbix_export>
