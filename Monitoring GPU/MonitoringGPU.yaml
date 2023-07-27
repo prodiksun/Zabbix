@@ -1,0 +1,89 @@
+zabbix_export:
+  version: '6.2'
+  date: '2022-12-15T10:13:38Z'
+  template_groups:
+    -
+      uuid: 846977d1dfed4968bc5f8bdb363285bc
+      name: 'Templates/Operating systems'
+    -
+      uuid: 02e4df4f20b848e79267641790f241da
+      name: Templates/Virtualization
+  templates:
+    -
+      uuid: 40534f52bf0c4818b374d3c25b07ca86
+      template: 'Windows GPU monitoring'
+      name: 'Windows GPU monitoring'
+      description: |
+        Необходима запущенная программа Open Hardware Monitor в системе.
+        https://openhardwaremonitor.org/
+        
+        В zabbix_agentd.conf
+        UserParameter=system.sensor[*],powershell.exe C:\OpenHardwareMonitor\system-sensor.ps1 $1 $2 $3 $4
+        
+        Получение всех датчиков: 
+        (Get-WmiObject -Namespace Root\OpenHardwareMonitor -Class sensor ) | ft Identifier,name,SensorType,Value
+      groups:
+        -
+          name: 'Templates/Operating systems'
+        -
+          name: Templates/Virtualization
+      items:
+        -
+          uuid: 7e73f0cc0ecb4e8781a69dbacb47b7e0
+          name: 'GPU speed fan procent'
+          key: 'system.sensor[nvidiagpu,0,control,0]'
+          history: 7d
+          trends: 7d
+          units: '%'
+          tags:
+            -
+              tag: monitoring
+        -
+          uuid: 233a0076365d4218be0e5d9769ca9eb8
+          name: 'GPU speed fan'
+          key: 'system.sensor[nvidiagpu,0,fan,0]'
+          history: 7d
+          trends: 7d
+          tags:
+            -
+              tag: monitoring
+        -
+          uuid: 3f25192b4b894e628c5b20f51a8d23e2
+          name: 'GPU utilization'
+          key: 'system.sensor[nvidiagpu,0,load,0]'
+          history: 7d
+          trends: 7d
+          units: '%'
+          tags:
+            -
+              tag: monitoring
+        -
+          uuid: 11f39693a3104267ab2c6d396d236ed1
+          name: 'GPU memory utilization'
+          key: 'system.sensor[nvidiagpu,0,load,3]'
+          history: 7d
+          value_type: FLOAT
+          preprocessing:
+            -
+              type: STR_REPLACE
+              parameters:
+                - ','
+                - .
+          tags:
+            -
+              tag: monitoring
+        -
+          uuid: a03e9761fa4240dbbb07a3e32c19c850
+          name: 'GPU Temperature'
+          key: 'system.sensor[nvidiagpu,0,temperature,0]'
+          history: 7d
+          trends: 7d
+          tags:
+            -
+              tag: monitoring
+          triggers:
+            -
+              uuid: 286bcf6890294f7c9f3b1df9c52a3e42
+              expression: 'last(/Windows GPU monitoring/system.sensor[nvidiagpu,0,temperature,0],#5)>=90'
+              name: 'GPU Очень высокая температура'
+              priority: HIGH
